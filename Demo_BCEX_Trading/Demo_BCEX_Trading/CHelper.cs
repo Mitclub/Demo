@@ -19,6 +19,24 @@ namespace Demo_BCEX_Trading
             return iRet;
 
         }
+		
+        public static bool IsValidTimeRange(DateTime dtRefundDate, DateTime dt, int flag = 1)
+        {
+            DateTime dtValid1 = dtRefundDate.AddDays(-1);
+            DateTime dtValid2 = dtRefundDate.AddDays(-2);
+
+            if (dt > dtRefundDate)
+            {
+                return false;
+            }
+            if ((dt > dtValid1 || dt <= dtValid2) && flag == 2)
+            {
+                return false;
+            }
+
+            return Is24Hours(dtRefundDate, dt);
+        }
+
 }
     public enum TRADETYPE
     {
