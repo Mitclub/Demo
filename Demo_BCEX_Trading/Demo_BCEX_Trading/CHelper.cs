@@ -65,6 +65,29 @@ namespace Demo_BCEX_Trading
 
             return dRet > 0.9 ? 0.9 : dRet;
         }
+		
+        public static bool IsSameDay(DateTime dt1, DateTime dt2)
+        {
+            if (dt1.Year == dt2.Year && dt1.Month == dt2.Month && dt1.Day == dt2.Day)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static double MathRound(double data)
+        {
+            string s = string.Format("{0}", data);
+            string temp = s;
+            int pos = s.IndexOf('.');
+            if (pos <= 0) return data;
+            s = temp.Substring(pos+1);
+            if (s.Length <= 8) return data;
+            s = s.Substring(0, 8);
+            double.TryParse(temp.Substring(0,pos+1) + s, out data);
+            return data;
+
+        }
 
 }
     public enum TRADETYPE
