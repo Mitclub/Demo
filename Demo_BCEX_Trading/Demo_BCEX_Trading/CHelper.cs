@@ -88,6 +88,19 @@ namespace Demo_BCEX_Trading
             return data;
 
         }
+        public static double Round(double data)
+        {
+            return MathRound(data);
+        }
+
+        public static string SerializeObject(RootObject lstUsers)
+        {
+            string sRet = string.Empty;
+
+            sRet = JsonConvert.SerializeObject(lstUsers);
+
+            return sRet;
+        }
 
 }
     public enum TRADETYPE
