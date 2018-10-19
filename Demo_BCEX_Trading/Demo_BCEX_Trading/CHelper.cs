@@ -102,6 +102,80 @@ namespace Demo_BCEX_Trading
             return sRet;
         }
 
+        public static void WriteToText(string txtContent, string txtPath)
+        {
+            using (FileStream fs = new FileStream(txtPath, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    sw.BaseStream.Seek(0, SeekOrigin.End);
+                    sw.WriteLine("{0}\n", txtContent);
+                    sw.Flush();
+                }
+            }
+        }
+
+        public static List<MITUserTradeRecs> MergeTradeRecords(List<MITUserTradeRecs> lsttradeRecs, List<MITUserTradeRecs> lstHistorytradeRecs )
+        {
+            List<MITUserTradeRecs> lstret = new List<MITUserTradeRecs>();
+
+            foreach (var item in lsttradeRecs)
+            {
+                var userrec = new MITUserTradeRecs();
+                if(item.sUserID == "772415")
+                {
+                    Console.WriteLine();
+                }
+                userrec.sUserID = item.sUserID;
+                userrec.dBalance = 0.0;
+                foreach (var item3 in item.lstTradingRecs)
+                {
+                    userrec.lstTradingRecs.Add(item3);
+                }
+                foreach (var item2 in lstHistorytradeRecs)
+                {
+                    if (item.sUserID == item2.sUserID)
+                    {
+                        foreach (var item4 in item2.lstTradingRecs)
+                        {
+                             userrec.lstTradingRecs.Add(item4);
+                        }                       
+                    }
+                }
+                lstret.Add(userrec);
+            }
+
+            return lstret;
+           // var dic = Convert(lsttradeRecs);
+           // var historydic = Convert(lstHistorytradeRecs);
+           // if (lstHistorytradeRecs.Count < 1)
+           // {
+           //     return lsttradeRecs;
+           // }
+           // foreach (KeyValuePair<string, Dictionary<DateTime, TradingRecords>> item in historydic)
+           // {
+           //     if (dic.ContainsKey(item.Key))
+           //     {                    
+           //         foreach (KeyValuePair<DateTime, TradingRecords> item2 in item.Value)
+           //         {
+           //             if (!dic[item.Key].ContainsKey(item2.Key))
+           //             {
+           //                 dic[item.Key].Add(item2.Key,item2.Value);
+           //             }
+           //             else
+           //             {
+           //                 dic[item.Key][item2.Key].dAmount += item2.Value.dAmount;
+           //             }
+           //         }
+           //     }
+           //     else
+           //     {
+           //         dic.Add(item.Key, item.Value);
+           //     }
+           // }
+           
+           //return Revert(dic);
+        }
 }
     public enum TRADETYPE
     {
