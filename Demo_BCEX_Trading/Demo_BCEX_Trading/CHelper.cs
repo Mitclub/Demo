@@ -176,6 +176,42 @@ namespace Demo_BCEX_Trading
            
            //return Revert(dic);
         }
+        public static Dictionary<string, Dictionary<DateTime, TradingRecords>> Convert(List<MITUserTradeRecs> lsttradeRecs)
+        {
+            var dic = new Dictionary<string, Dictionary<DateTime, TradingRecords>>();
+
+            foreach (var item in lsttradeRecs)
+            {                
+                var dic2 = new Dictionary<DateTime, TradingRecords>();
+
+                foreach (var item2 in item.lstTradingRecs)
+                {
+                    if(!dic2.ContainsKey(item2.dtTradingTime))
+                    {
+                        dic2.Add(item2.dtTradingTime, item2);
+                    }
+                    else
+                    {
+                        if (item2.enuTradeType == TRADETYPE.BUY)
+                        {
+                            dic2[item2.dtTradingTime].dAmount += item2.dAmount;
+                        }
+                        else
+                        {
+                            dic2[item2.dtTradingTime].dAmount -= item2.dAmount;
+                            if (dic2[item2.dtTradingTime].dAmount <0)
+                            {
+                                dic2[item2.dtTradingTime].enuTradeType = TRADETYPE.SELL;
+                                dic2[item2.dtTradingTime].dAmount = Math.Abs(dic2[item2.dtTradingTime].dAmount);
+                            }
+                        }
+                    }
+                }
+                dic.Add(item.sUserID,dic2);
+            }
+
+            return dic;
+        }
 }
     public enum TRADETYPE
     {
