@@ -29,6 +29,7 @@ namespace Demo_BCEX_Trading
             {
                 return false;
             }
+
             if ((dt > dtValid1 || dt <= dtValid2) && flag == 2)
             {
                 return false;
@@ -51,9 +52,7 @@ namespace Demo_BCEX_Trading
         }
 
         /// <summary>
-        /// 
         /// 根据账号MIT数量余额计算返利利率
-        /// 
         /// </summary>
         /// <param name="dOriginalNumber">账号起始总MIT数量</param>
         /// <param name="dCurrentNumber">当前已经销售MIT的数量</param>
