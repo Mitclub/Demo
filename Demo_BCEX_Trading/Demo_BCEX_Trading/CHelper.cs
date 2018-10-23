@@ -232,6 +232,7 @@ namespace Demo_BCEX_Trading
         }
     }
 }
+
     public enum TRADETYPE
     {
         NONE = -1,
