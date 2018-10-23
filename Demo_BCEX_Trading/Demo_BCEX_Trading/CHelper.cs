@@ -212,6 +212,26 @@ namespace Demo_BCEX_Trading
 
             return dic;
         }
+        public static List<MITUserTradeRecs> Revert(Dictionary<string, Dictionary<DateTime, TradingRecords>> dic)
+        {
+            var lstRet = new List<MITUserTradeRecs>();
+
+            foreach (KeyValuePair<string, Dictionary<DateTime, TradingRecords>> item in dic)
+            {
+                var recs = new MITUserTradeRecs();
+
+                recs.sUserID = item.Key;
+
+                foreach (KeyValuePair<DateTime, TradingRecords> item2 in item.Value)
+                {
+                    recs.lstTradingRecs.Add(item2.Value);
+                }
+                lstRet.Add(recs);
+            }           
+            
+            return lstRet;
+        }
+    }
 }
     public enum TRADETYPE
     {
