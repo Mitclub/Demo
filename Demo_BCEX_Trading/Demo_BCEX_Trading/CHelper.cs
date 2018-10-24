@@ -232,6 +232,27 @@ namespace Demo_BCEX_Trading
         }
     }
 }
+    public class MITUserWeightRecs
+    {
+        public string sUserID;//可以就是用户账号或者映射的GUID （再hash或者对账号进行MD5，比较简单）
+        public double dWeight = 0.0;
+        public string formular;
+    }
+
+    public class MITUserRefund
+    {
+        public string sUserID;//可以就是用户账号或者映射的GUID （再hash或者对账号进行MD5，比较简单）
+        public double dETH = 0.0;//返多少个ETH给该用户
+        public DateTime dtTimeStamp;
+        public bool bIsTransferOK = false;
+
+        public MITUserRefund(string sID, double dEth)
+        {
+            sUserID = sID;
+            dETH = dEth;
+            dtTimeStamp = DateTime.Now;
+        }
+    }
 
     public enum TRADETYPE
     {
