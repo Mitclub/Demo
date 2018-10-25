@@ -19,7 +19,7 @@ namespace Demo_BCEX_Trading
             return iRet;
 
         }
-		
+
         public static bool IsValidTimeRange(DateTime dtRefundDate, DateTime dt, int flag = 1)
         {
             DateTime dtValid1 = dtRefundDate.AddDays(-1);
@@ -29,7 +29,6 @@ namespace Demo_BCEX_Trading
             {
                 return false;
             }
-
             if ((dt > dtValid1 || dt <= dtValid2) && flag == 2)
             {
                 return false;
@@ -37,7 +36,7 @@ namespace Demo_BCEX_Trading
 
             return Is24Hours(dtRefundDate, dt);
         }
-		
+
         public static bool Is24Hours(DateTime dtRefundDate, DateTime dt)
         {
             bool bret = false;
@@ -50,9 +49,10 @@ namespace Demo_BCEX_Trading
             }
             return bret;
         }
-
         /// <summary>
+        /// 
         /// 根据账号MIT数量余额计算返利利率
+        /// 
         /// </summary>
         /// <param name="dOriginalNumber">账号起始总MIT数量</param>
         /// <param name="dCurrentNumber">当前已经销售MIT的数量</param>
@@ -64,7 +64,6 @@ namespace Demo_BCEX_Trading
 
             return dRet > 0.9 ? 0.9 : dRet;
         }
-		
         public static bool IsSameDay(DateTime dt1, DateTime dt2)
         {
             if (dt1.Year == dt2.Year && dt1.Month == dt2.Month && dt1.Day == dt2.Day)
@@ -211,6 +210,7 @@ namespace Demo_BCEX_Trading
 
             return dic;
         }
+
         public static List<MITUserTradeRecs> Revert(Dictionary<string, Dictionary<DateTime, TradingRecords>> dic)
         {
             var lstRet = new List<MITUserTradeRecs>();
@@ -231,7 +231,7 @@ namespace Demo_BCEX_Trading
             return lstRet;
         }
     }
-}
+
     public class MITUserWeightRecs
     {
         public string sUserID;//可以就是用户账号或者映射的GUID （再hash或者对账号进行MD5，比较简单）
@@ -254,6 +254,41 @@ namespace Demo_BCEX_Trading
         }
     }
 
+    public class MITUserTradeRecs
+    {
+        public string sUserID;//可以就是用户账号或者映射的GUID （再hash或者对账号进行MD5，比较简单）
+        public double dBalance = 0.0;//当前共持有多少个MIT
+        public List<TradingRecords> lstTradingRecs = new List<TradingRecords>();
+    }
+
+    public class TradingRecords
+    {
+        public int RecID = 0;
+        public TRADETYPE enuTradeType = TRADETYPE.NONE;
+        public double dPrice = 0;
+        public double dAmount = 0;
+        public DateTime dtTradingTime;
+
+        public Record Convert()
+        {
+            var rec = new Record();
+
+            rec.RecID = RecID;
+            rec.dAmount = CHelper.Round(dAmount);
+            rec.dPrice = CHelper.Round(dPrice);
+            rec.dtTradingTime = dtTradingTime.ToString();
+            rec.Type = enuTradeType.ToString();
+
+            return rec;
+        }
+        public override string ToString()
+        {
+            string s = string.Format("Price:[{0}], Amount:[{1}], TradeTime[{2}],TradeType:[{3}], RecID:[{4}]",
+                dPrice,dAmount,dtTradingTime.ToString(), enuTradeType.ToString(), RecID);
+            return s;
+        }
+    }
+
     public enum TRADETYPE
     {
         NONE = -1,
@@ -261,4 +296,3 @@ namespace Demo_BCEX_Trading
         BUY = 1
     }
 }
-
