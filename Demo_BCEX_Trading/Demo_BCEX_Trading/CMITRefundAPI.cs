@@ -90,6 +90,62 @@ namespace Demo_BCEX_Trading
             return CHelper.Round(dFloatingRate);
         }
 
+        /// <summary>
+        /// 
+        /// 获取昨天向MIT持币者总共返ETH的数量
+        /// 
+        /// </summary>
+        /// <param name="dYesterdayTotalProfit">昨天项目方总共获得的ETH数</param>
+        /// <param name="dDayBaseRefundRate">基准分红百分比</param>
+        /// <param name="dDayFloatingRate">根据交易额的起伏而计算的浮动浮动利率</param>
+        /// <returns></returns>
+        public double GetTotalDayRefundForMITHolder(double dYesterdayTotalProfit, double dDayBaseRefundRate,double dDayFloatingRate)
+        {           
+            double dDayRefundRate = dDayBaseRefundRate + dDayFloatingRate;
+
+            //每天分红比例最大范围应该从配置文件中获取
+            if (dDayRefundRate < CSettings.RefundRateMIN || dDayRefundRate > CSettings.RefundRateMAX)
+            {
+                //throw exception
+                return -1;
+            }
+
+            if (dYesterdayTotalProfit <= 0.0)
+            {
+                //throw exception
+                return -1;
+            }
+
+            return CHelper.Round(dYesterdayTotalProfit * dDayRefundRate);
+        }
+                
+        /// <summary>
+        /// 
+        /// 计算每个用户权重，交易日期必须小于分红日期，并且不包括分红日当日
+        /// 
+        /// </summary>
+        /// <param name="dtRefundDate">分红日期</param>
+        /// <param name="lstUsers">所有MIT持有者的交易记录</param>
+        /// <returns></returns>
+        public List<MITUserWeightRecs> CalcUserWeight(DateTime dtRefundDate, List<MITUserTradeRecs> lstUsers)
+        {
+            List<MITUserWeightRecs> lstRet = new List<MITUserWeightRecs>();
+          
+            double dWeight = 0.0;
+           
+            foreach (var user in lstUsers)
+            {
+                var userweight = new MITUserWeightRecs();
+                dWeight = GetWeightForOneUser(dtRefundDate,user);
+
+                userweight.sUserID = user.sUserID;
+                userweight.dWeight = dWeight;
+
+                lstRet.Add(userweight);
+            }
+            return lstRet;
+        }
+
     }
 
 
