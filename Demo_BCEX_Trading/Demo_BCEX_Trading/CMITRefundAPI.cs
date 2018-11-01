@@ -146,6 +146,26 @@ namespace Demo_BCEX_Trading
             return lstRet;
         }
 
+        public List<MITUserWeightRecs> GetYesterdayWeightUsers(DateTime dtRefundDate, List<MITUserTradeRecs> lstUsers)
+        {
+            List<MITUserWeightRecs> lstRet = new List<MITUserWeightRecs>();
+            DateTime dtValid1 = dtRefundDate.AddDays(-1);
+            DateTime dtValid2 = dtRefundDate.AddDays(-2);
+
+            double dWeight = 0.0;
+
+            foreach (var user in lstUsers)
+            {
+                var userweight = new MITUserWeightRecs();
+                dWeight = GetWeightForOneUser(dtRefundDate, user,2);
+
+                userweight.sUserID = user.sUserID;
+                userweight.dWeight = dWeight;
+
+                lstRet.Add(userweight);
+            }
+            return lstRet;
+        }
     }
 
 
