@@ -168,5 +168,59 @@ namespace Demo_BCEX_Trading
         }
     }
 
+        //计算总权重
+        public double CalcTotalWeight(List<MITUserWeightRecs> lstUsers)
+        {
+            double dRet = 0.0;
+            foreach (var item in lstUsers)
+            {
+                dRet += item.dWeight;
+            }
+            Console.WriteLine(string.Format("第六步：计算总权重:[{0}]\r\n", dRet));
+            string data = string.Empty;
+            foreach (var item in lstUsers)
+            {
+                data = string.Format("     用户:[{0}],权重[{1}],权重占比[{2}%]",item.sUserID,item.dWeight, CHelper.Round(item.dWeight/dRet*100));
+                Console.WriteLine(data);               
+            }
+            Console.WriteLine();
+            return dRet;
+        }
+
+        /// <summary>
+        /// 为每一个MIT持有者计算分红
+        /// </summary>
+        /// <param name="dRefundProfit">总分红的ETH数量</param>
+        /// <param name="dTotalWeight">总权重</param>
+        /// <param name="lstUsers">所有MIT持有者</param>
+        /// <returns></returns>
+        public List<MITUserRefund> CalcRefundForMITUser(double dRefundProfit,double dTotalWeight, List<MITUserWeightRecs> lstUsers)
+        {
+            List<MITUserRefund> lstRet = new List<MITUserRefund>();
+            double dEth = 0.0;
+            foreach (var user in lstUsers)
+            {
+                dEth = CHelper.Round(user.dWeight / dTotalWeight * dRefundProfit);
+                lstRet.Add(new MITUserRefund(user.sUserID,dEth));               
+            }
+
+            //验证用户获得的ETH和今天需要分红的数量
+            dEth = 0.0;
+            foreach (var item in lstRet)
+            {
+                dEth += item.dETH;
+            }
+            if (dEth < dRefundProfit)
+            {
+                //多出来的这一点要怎么处理？？
+                //Console.WriteLine("分红差值： " + (dRefundProfit - dEth).ToString());
+            }
+            else if (dEth > dRefundProfit)
+            {
+               //不应该发生
+               //throw exception
+            }
+            return lstRet;
+        }
 
 }
