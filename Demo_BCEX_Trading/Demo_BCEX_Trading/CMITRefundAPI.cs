@@ -223,4 +223,55 @@ namespace Demo_BCEX_Trading
             return lstRet;
         }
 
+        /// <summary>
+        /// 
+        /// 向用户派发ETH
+        /// 
+        /// </summary>
+        /// <param name="sAccount">项目方账号</param>
+        /// <param name="lstUsers">待派发的用户列表</param>
+        /// <returns></returns>
+        public bool TransferETHToMITHolder(string sMITAcct, List<MITUserRefund> lstUsers)
+        {
+            bool bRet = true;
+
+            foreach (var item in lstUsers)
+            {
+                if (item.dETH > 0)
+                {
+                    item.bIsTransferOK = CBCEXTradeAPI.Transfer(sMITAcct, item.sUserID, item.dETH);
+                }
+
+                if (!item.bIsTransferOK) //出错了
+                {
+                    //1. LOG
+                    //2. 三次后转人工
+                }
+            }
+
+            return bRet;
+        }
+
+        /// <summary>
+        /// 
+        /// 保存和更新，MIT分红程序自身保存的交易数据和产生报告
+        /// 
+        /// </summary>
+        /// <param name="lstUsers">待派发的用户列表</param>
+        /// <returns></returns>
+        public bool UpdateMITHoldersTradingRecords(List<MITUserRefund> lstUsers)
+        {
+            bool bRet = true;
+
+            foreach (var item in lstUsers)
+            {
+                if (item.dETH > 0)
+                {
+                    //CHelpe
+                    //item.bIsTransferOK = CBCEXTradeAPI.Transfer(sMITAcct, item.sUserID, item.dETH);
+                }
+            }
+
+            return bRet;
+        }
 }
