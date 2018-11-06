@@ -274,4 +274,138 @@ namespace Demo_BCEX_Trading
 
             return bRet;
         }
+		
+        /// <summary>
+        /// 
+        /// 保存和更新，MIT分红程序自身保存的交易数据和产生报告
+        /// 
+        /// </summary>
+        /// <param name="lstUsers">待派发的用户列表</param>
+        /// <returns></returns>
+        public bool UpdateMITHoldersTradingRecords(DateTime dtRefundDate, List<MITUserTradeRecs> lstUsers)
+        {
+            bool bRet = true;
+
+           
+            //return lstRet;
+
+            var saveData = new RootObject();
+
+            saveData.FetchDataTime = DateTime.Now.ToString();
+            saveData.Nodesize = _lstWeightDetails.Count;
+            saveData.Users = new List<User>();
+
+            foreach (var item in _lstWeightDetails)
+            {
+                var usr = new User();
+                usr.sUserID = item.sUserID;
+                usr.RecsSize = item.lstTradingRecs.Count;
+                usr.Records = new List<Record>();
+                foreach (var item2 in item.lstTradingRecs)
+                {
+                    var rec = new Record();
+                    usr.Records.Add(item2.Convert());
+                }
+
+                saveData.Users.Add(usr);
+            }
+            string newdata = CHelper.SerializeObject(saveData);
+            string filename = CSettings.UserHistoryTransactionRecords.Substring(0, CSettings.UserHistoryTransactionRecords.LastIndexOf('.'));
+            string date = string.Format("_{0}{1}{2}{3}{4}{5}", DateTime.Now.Year, DateTime.Now.Month,
+                                 DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            filename += date + ".txt";
+
+            if (File.Exists(Environment.CurrentDirectory + CSettings.UserHistoryTransactionRecords))
+            {
+                File.Move(Environment.CurrentDirectory + CSettings.UserHistoryTransactionRecords,
+                    Environment.CurrentDirectory + filename);
+            }
+
+            CHelper.WriteToText(newdata, Environment.CurrentDirectory + CSettings.UserHistoryTransactionRecords);
+
+            return bRet;
+        }
+
+
+        // 计算每个用户的权重
+        /*
+               
+              时间        数量       价格
+             06：00       +1         0.1   
+             07：00       +3         0.5   
+             08：00       +3         0.8   
+             09：00       +3         1.0   
+             10：00       -5         2.0   
+             11：00       +5         3.0   
+             12：00       +3         4.0   
+             13：00       +1         5.0   
+             14：00       -8         6.0   
+             15：00       +1000       0   
+             16：00       -200       12.0
+             17：00       +200       15.0
+             ----------------------------           
+                          +1006
+
+             200 × 15.0 = 3000
+             806 × 0    = 0             
+             -----------------
+                        +3000
+
+         * */
+        //private double GetWeightForOneUser(DateTime dtRefundDate, MITUserTradeRecs user)
+        //{
+        //    double dRet = 0.0;
+
+        //    //按交易时间降序排序，最新的交易在最前面
+        //    var lstRecs = user.lstTradingRecs.OrderByDescending<TradingRecords, DateTime>(x=>x.dtTradingTime).ToList();
+
+        //    //所有的交易时间必须小于此时间
+        //    DateTime dtValid = dtRefundDate.AddDays(-1);
+
+        //    //所持有的MIT
+        //    double dTotalMIT = 0.0;
+        //    foreach (var item in lstRecs)
+        //    {
+        //        if (item.dtTradingTime > dtValid)
+        //        {
+        //            continue;
+        //        }
+        //        if (item.enuTradeType == TRADETYPE.BUY)
+        //        {
+        //            dTotalMIT += item.dAmount;
+        //        }
+        //        else if (item.enuTradeType == TRADETYPE.SELL)
+        //        {
+        //            dTotalMIT -= item.dAmount;
+        //        }                
+        //    }
+
+        //    if (dTotalMIT <= 0)
+        //    {
+        //        return dRet;
+        //    }
+
+        //    //按照First In First Out的原则 
+        //    for (int i = 0; i < lstRecs.Count; i++)
+        //    {
+        //        if(lstRecs[i].enuTradeType != TRADETYPE.BUY)
+        //        {
+        //            continue;
+        //        }
+        //        var temp = dTotalMIT - lstRecs[i].dAmount;
+
+        //        if (temp >= 0)
+        //        {
+        //            dRet += lstRecs[i].dAmount * lstRecs[i].dPrice;
+        //        }
+        //        else
+        //        {
+        //            dRet += dTotalMIT * lstRecs[i].dPrice;
+        //            break;
+        //        }
+        //        dTotalMIT = temp;
+        //    }
+
+        //    return dRet;
+        //}
 }
