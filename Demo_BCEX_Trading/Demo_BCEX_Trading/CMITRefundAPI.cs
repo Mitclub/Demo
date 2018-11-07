@@ -166,7 +166,6 @@ namespace Demo_BCEX_Trading
             }
             return lstRet;
         }
-    }
 
         //计算总权重
         public double CalcTotalWeight(List<MITUserWeightRecs> lstUsers)
@@ -222,7 +221,8 @@ namespace Demo_BCEX_Trading
             }
             return lstRet;
         }
-
+               
+        
         /// <summary>
         /// 
         /// 向用户派发ETH
@@ -274,7 +274,9 @@ namespace Demo_BCEX_Trading
 
             return bRet;
         }
-		
+
+        #region
+
         /// <summary>
         /// 
         /// 保存和更新，MIT分红程序自身保存的交易数据和产生报告
@@ -408,4 +410,67 @@ namespace Demo_BCEX_Trading
 
         //    return dRet;
         //}
+
+        // 计算每个用户的权重        
+        private double GetWeightForOneUser(DateTime dtRefundDate, MITUserTradeRecs user, int flag=1)
+        {
+            double dRet = 0.0;
+
+            //按交易时间降序排序，最新的交易在最前面
+            var lstRecs = user.lstTradingRecs.OrderByDescending<TradingRecords, DateTime>(x => x.dtTradingTime).ToList();
+
+            //所有的交易时间必须小于此时间           
+            DateTime dtValid1 = dtRefundDate.AddDays(-1);
+            DateTime dtValid2 = dtRefundDate.AddDays(-2);
+
+            //所持有的MIT
+            double dTotalMIT = 0.0;
+            foreach (var item in lstRecs)
+            {
+                if (item.dtTradingTime > dtValid1 || (item.dtTradingTime <= dtValid2 && flag == 2))
+                {
+                    continue;
+                }
+                if (item.enuTradeType == TRADETYPE.BUY)
+                {
+                    dTotalMIT += item.dAmount;
+                }
+                else if (item.enuTradeType == TRADETYPE.SELL)
+                {
+                    dTotalMIT -= item.dAmount;
+                }
+            }
+
+            if (dTotalMIT <= 0)
+            {
+                return dRet;
+            }
+
+            //按照First In First Out的原则 
+            for (int i = 0; i < lstRecs.Count; i++)
+            {
+                if (lstRecs[i].enuTradeType != TRADETYPE.BUY)
+                {
+                    continue;
+                }
+                var temp = dTotalMIT - lstRecs[i].dAmount;
+
+                if (temp >= 0)
+                {
+                    dRet += lstRecs[i].dAmount * lstRecs[i].dPrice;
+                }
+                else
+                {
+                    dRet += dTotalMIT * lstRecs[i].dPrice;
+                    break;
+                }
+                dTotalMIT = temp;
+            }
+
+            return dRet;
+        }
+        #endregion
+    }
+
+
 }
