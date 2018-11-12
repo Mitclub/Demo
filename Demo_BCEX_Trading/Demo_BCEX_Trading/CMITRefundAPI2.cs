@@ -64,6 +64,62 @@ namespace Demo_BCEX_Trading
             return CHelper.Round(dFloatingRate);
         }
 
+        /// <summary>
+        /// 
+        /// 获取昨天向MIT持币者总共返ETH的数量
+        /// 
+        /// </summary>
+        /// <param name="dYesterdayTotalProfit">昨天项目方总共获得的ETH数</param>
+        /// <param name="dDayBaseRefundRate">基准分红百分比</param>       
+        /// <returns></returns>
+        public double GetTotalDayRefundForMITHolder(double dYesterdayTotalProfit, double dDayBaseRefundRate)
+        {
+            double dDayRefundRate = dDayBaseRefundRate ;
+
+            //每天分红比例最大范围应该从配置文件中获取
+            if (dDayRefundRate < CSettings.RefundRateMIN || dDayRefundRate > CSettings.RefundRateMAX)
+            {
+                //throw exception
+                return -1;
+            }
+
+            if (dYesterdayTotalProfit <= 0.0)
+            {
+                //throw exception
+                return -1;
+            }
+
+            return CHelper.Round(dYesterdayTotalProfit * dDayRefundRate);
+        }
+
+        /// <summary>
+        /// 
+        /// 获取昨天向MIT持币者总共返ETH的数量
+        /// 
+        /// </summary>
+        /// <param name="dYesterdayTotalProfit">昨天项目方总共获得的ETH数</param>
+        /// <param name="dDayBaseRefundRate">基准分红百分比</param>
+        /// <param name="dDayFloatingRate">根据交易额的起伏而计算的浮动浮动利率</param>
+        /// <returns></returns>
+        public double GetTotalDayRefundForMITHolder(double dYesterdayTotalProfit, double dDayBaseRefundRate, double dDayFloatingRate)
+        {
+            double dDayRefundRate = dDayBaseRefundRate + dDayFloatingRate;
+
+            //每天分红比例最大范围应该从配置文件中获取
+            if (dDayRefundRate < CSettings.RefundRateMIN || dDayRefundRate > CSettings.RefundRateMAX)
+            {
+                //throw exception
+                return -1;
+            }
+
+            if (dYesterdayTotalProfit <= 0.0)
+            {
+                //throw exception
+                return -1;
+            }
+
+            return CHelper.Round(dYesterdayTotalProfit * dDayRefundRate);
+        }
     }
 
 
