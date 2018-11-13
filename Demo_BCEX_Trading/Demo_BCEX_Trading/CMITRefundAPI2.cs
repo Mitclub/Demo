@@ -120,6 +120,74 @@ namespace Demo_BCEX_Trading
 
             return CHelper.Round(dYesterdayTotalProfit * dDayRefundRate);
         }
+		
+        public List<MITUserWeightRecs> ComputeWeigth(DateTime dtRefundDate, int flag = 1)
+        {
+            var lstRet = new List<MITUserWeightRecs>();
+
+            if (_lstWeightDetails.Count < 1) return lstRet;
+
+            foreach (var item in _lstWeightDetails)
+            {
+
+                var userweight = new MITUserWeightRecs();
+                userweight.sUserID = item.sUserID;
+                double dWeight = 0.0;
+                foreach (var item2 in item.lstTradingRecs)
+                {
+                    if (!IsValidTimeRange(dtRefundDate, item2.dtTradingTime,flag))                  
+                    {
+                        continue;
+                    }
+                    dWeight += item2.dAmount * item2.dPrice;
+                }
+                
+                userweight.dWeight = CHelper.Round(dWeight);
+                lstRet.Add(userweight);
+
+               
+
+            }
+
+            return lstRet;
+        }
+
+        /// <summary>
+        /// 
+        /// 计算每个用户权重，交易日期必须小于分红日期，并且不包括分红日当日
+        /// 
+        /// </summary>
+        /// <param name="dtRefundDate">分红日期</param>
+        /// <param name="lstUsers">所有MIT持有者的交易记录</param>
+        /// <returns></returns>
+        public List<MITUserWeightRecs> CalcUserWeight(DateTime dtRefundDate, List<MITUserTradeRecs> lstUsers)
+        {
+            List<MITUserWeightRecs> lstRet = new List<MITUserWeightRecs>();            
+            double dWeight = 0.0;
+
+         
+
+            foreach (var user in lstUsers)
+            {
+               
+
+                var userweight = new MITUserWeightRecs();
+                dWeight = GetWeightForOneUser(dtRefundDate, user);
+
+                var wdetails = GetWeigthDetails(dtRefundDate, user, dWeight);
+               
+                userweight.sUserID = user.sUserID;
+                userweight.dWeight = CHelper.Round(dWeight);
+
+                lstRet.Add(userweight);
+
+               
+            }
+            return lstRet;
+        }
+
+
+
     }
 
 
