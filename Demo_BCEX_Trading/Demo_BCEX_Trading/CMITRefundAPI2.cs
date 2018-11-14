@@ -186,6 +186,50 @@ namespace Demo_BCEX_Trading
             return lstRet;
         }
 
+        public List<MITUserWeightRecs> GetYesterdayWeightUsers(DateTime dtRefundDate, List<MITUserTradeRecs> lstUsers)
+        {
+            List<MITUserWeightRecs> lstRet = new List<MITUserWeightRecs>();
+            DateTime dtValid1 = dtRefundDate.AddDays(-1);
+            DateTime dtValid2 = dtRefundDate.AddDays(-2);
+
+            double dWeight = 0.0;
+
+            foreach (var user in lstUsers)
+            {
+                var userweight = new MITUserWeightRecs();
+                dWeight = GetWeightForOneUser(dtRefundDate, user, 2);
+
+                userweight.sUserID = user.sUserID;
+                userweight.dWeight = dWeight;
+
+                lstRet.Add(userweight);
+            }
+            return lstRet;
+        }
+
+        //计算总权重
+        public double CalcTotalWeight(List<MITUserWeightRecs> lstUsers)
+        {
+            double dRet = 0.0;
+            foreach (var item in lstUsers)
+            {
+                dRet += item.dWeight;
+            }
+           
+            if (dRet<=0)
+            {
+                return dRet;
+            }
+            string data = string.Empty;
+            foreach (var item in lstUsers)
+            {
+                if (item.dWeight <= 0) continue;
+                data = string.Format("     用户:[{0}],权重[{1}],权重占比[{2}%]", item.sUserID, item.dWeight, CHelper.Round(item.dWeight / dRet * 100));
+                Console.WriteLine(data);
+            }
+            Console.WriteLine();
+            return dRet;
+        }
 
 
     }
