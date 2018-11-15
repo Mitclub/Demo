@@ -230,6 +230,90 @@ namespace Demo_BCEX_Trading
             Console.WriteLine();
             return dRet;
         }
+ //计算总权重
+        public double CalcTotalWeight(List<MITUserWeightRecs> lstUsers)
+        {
+            double dRet = 0.0;
+            foreach (var item in lstUsers)
+            {
+                dRet += item.dWeight;
+            }
+           
+            if (dRet<=0)
+            {
+                return dRet;
+            }
+            string data = string.Empty;
+            foreach (var item in lstUsers)
+            {
+                if (item.dWeight <= 0) continue;
+                data = string.Format("     用户:[{0}],权重[{1}],权重占比[{2}%]", item.sUserID, item.dWeight, CHelper.Round(item.dWeight / dRet * 100));
+                Console.WriteLine(data);
+            }
+            Console.WriteLine();
+            return dRet;
+        }
+
+        /// <summary>
+        /// 为每一个MIT持有者计算分红
+        /// </summary>
+        /// <param name="dRefundProfit">总分红的ETH数量</param>
+        /// <param name="dTotalWeight">总权重</param>
+        /// <param name="lstUsers">所有MIT持有者</param>
+        /// <returns></returns>
+        public List<MITUserRefund> CalcRefundForMITUser(double dRefundProfit, double dTotalWeight, List<MITUserWeightRecs> lstUsers)
+        {
+            List<MITUserRefund> lstRet = new List<MITUserRefund>();
+            double dEth = 0.0;
+            double dtotal = 0.0;
+            double dweight = 0.0;
+            double dper = 0.0;
+
+            //var bd = new BCEXData();
+            //var lst = bd.TestGetWeight();
+            //bool isfound = false;
+
+            List<MITUserWeightRecs> lsttmp = new List<MITUserWeightRecs>();
+            foreach (var user in lstUsers)
+            {
+               
+                if (user.dWeight <= 0.000000000001)
+                {
+                    continue;
+                }
+                dweight += user.dWeight;
+                dper += (double)user.dWeight / (double)dTotalWeight;
+                dEth = (double)((double)user.dWeight / (double)dTotalWeight) * (double)dRefundProfit;
+                dtotal += dEth;
+                if(dtotal >= dRefundProfit)
+                {
+                    Console.WriteLine();
+                }
+                lstRet.Add(new MITUserRefund(user.sUserID, dEth));                
+               
+            }
+
+            //foreach (var item in lst)
+            //{
+            //    isfound = false;
+
+            //    foreach (var item3 in lstRet)
+            //    {
+            //        if (item3.sUserID == item.Item1.Trim())
+            //        {
+            //            isfound = true;
+            //            break;
+            //        }
+            //    }
+            //    if (!isfound)
+            //    {
+            //        Console.WriteLine("CAN NOT FOUND :" + item.Item1 + " weight : " + item.Item2);
+            //    }
+
+            //}
+
+            return lstRet;
+        }
 
 
     }
