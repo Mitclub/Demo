@@ -316,6 +316,94 @@ namespace Demo_BCEX_Trading
         }
 
 
+        /// <summary>
+        /// 
+        /// 向用户派发ETH
+        /// 
+        /// </summary>
+        /// <param name="sAccount">项目方账号</param>
+        /// <param name="lstUsers">待派发的用户列表</param>
+        /// <returns></returns>
+        public bool TransferETHToMITHolder(string sMITAcct, List<MITUserRefund> lstUsers)
+        {
+            bool bRet = true;
+
+            foreach (var item in lstUsers)
+            {
+                if (item.dETH > 0)
+                {
+                    item.bIsTransferOK = CBCEXTradeAPI.Transfer(sMITAcct, item.sUserID, item.dETH);
+                }
+
+                if (!item.bIsTransferOK) //出错了
+                {
+                    //1. LOG
+                    //2. 三次后转人工
+                }
+            }
+
+            return bRet;
+        }
+
+        private MITUserTradeRecs FilteringWithFIFO(MITUserTradeRecs user, double dTotalMIT)
+        {
+            MITUserTradeRecs recs = new MITUserTradeRecs();
+            double dRet = 0.0;
+
+            //按交易时间降序排序，最新的交易在最前面
+            var lstRecs = user.lstTradingRecs.OrderByDescending<TradingRecords, DateTime>(x => x.dtTradingTime).ToList();
+
+            recs.sUserID = user.sUserID;
+            recs.dBalance = dTotalMIT;
+
+            //按照First In First Out的原则 
+            for (int i = 0; i < lstRecs.Count; i++)
+            {
+                var tradeRecs = new TradingRecords();
+
+                if (lstRecs[i].enuTradeType != TRADETYPE.BUY)
+                {
+                    continue;
+                }
+                var temp = dTotalMIT - lstRecs[i].dAmount;
+
+                if (temp >= 0)
+                {
+                    dRet += lstRecs[i].dAmount * lstRecs[i].dPrice;
+
+                    tradeRecs.dAmount = lstRecs[i].dAmount;
+                    tradeRecs.dPrice = lstRecs[i].dPrice;
+                    tradeRecs.RecID = lstRecs[i].RecID;
+                    tradeRecs.enuTradeType = TRADETYPE.BUY;
+                    tradeRecs.dtTradingTime = lstRecs[i].dtTradingTime;
+                    recs.lstTradingRecs.Add(tradeRecs);
+                }
+                else
+                {
+                    dRet += dTotalMIT * lstRecs[i].dPrice;
+                    if (dTotalMIT > 0)
+                    {
+                        tradeRecs.dAmount = dTotalMIT;
+                        tradeRecs.dPrice = lstRecs[i].dPrice;
+                        tradeRecs.RecID = lstRecs[i].RecID;
+                        tradeRecs.enuTradeType = TRADETYPE.BUY;
+                        tradeRecs.dtTradingTime = lstRecs[i].dtTradingTime;
+                        recs.lstTradingRecs.Add(tradeRecs);
+                    }
+                    break;
+                }
+                dTotalMIT = temp;
+                if (dTotalMIT <= 0)
+                {
+                    break;
+                }
+            }
+
+            return recs;
+        }
+
+
+
     }
 
 
