@@ -401,6 +401,101 @@ namespace Demo_BCEX_Trading
 
             return recs;
         }
+       public void TestWeight(DateTime dtRefundDate,MITUserTradeRecs user)
+        {
+            var dWeight = GetWeight(dtRefundDate, user);
+
+            var wdetails = FilteringWithFIFO(user, dWeight);
+
+            double dt = 0.0;
+            foreach (var item in wdetails.lstTradingRecs)
+            {
+                dt += item.dPrice * item.dAmount;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// 保存和更新，MIT分红程序自身保存的交易数据和产生报告
+        /// 
+        /// </summary>
+        /// <param name="lstUsers">待派发的用户列表</param>
+        /// <returns></returns>
+        public bool UpdateMITHoldersTradingRecords(DateTime dtRefundDate, List<MITUserTradeRecs> lstUsers)
+        {
+            bool bRet = true;
+
+            List<MITUserWeightRecs> lstRet = new List<MITUserWeightRecs>();
+            _lstWeightDetails.Clear();
+            double dWeight = 0.0;
+            double dTotal = 0.0;
+
+            foreach (var user in lstUsers)
+            {               
+                var userweight = new MITUserWeightRecs();
+                dWeight = GetWeight(dtRefundDate, user);
+
+                var wdetails = FilteringWithFIFO(user, dWeight);
+                if (wdetails.lstTradingRecs.Count > 0)
+                {
+                    _lstWeightDetails.Add(wdetails);
+                }
+               
+                userweight.sUserID = user.sUserID;
+                userweight.dWeight = CHelper.Round(dWeight);
+                
+                lstRet.Add(userweight);
+            }
+
+            if (_lstWeightDetails.Count <= 0)
+            {
+                return false;
+            }
+
+            var saveData = new RootObject();
+
+            saveData.FetchDataTime = DateTime.Now.ToString();
+            saveData.Nodesize = _lstWeightDetails.Count;
+            saveData.Users = new List<User>();
+
+            foreach (var item in _lstWeightDetails)
+            {
+                var usr = new User();
+                usr.sUserID = item.sUserID;
+                usr.RecsSize = item.lstTradingRecs.Count;
+                usr.Records = new List<Record>();
+                usr.dBalance = 0.0;
+                foreach (var item2 in item.lstTradingRecs)
+                {
+                    var rec = new Record();
+                    usr.dBalance += item2.dAmount * item2.dPrice;
+                    usr.Records.Add(item2.Convert());
+                }
+                usr.dBalance = CHelper.Round(usr.dBalance);
+                dTotal += usr.dBalance;
+                saveData.Users.Add(usr);
+            }
+
+            BCEXData bd = new BCEXData();
+            var history = bd.GetHistory();
+
+            string newdata = CHelper.SerializeObject(saveData);
+            string filename = CSettings.UserHistoryDataPath.Substring(0,CSettings.UserHistoryDataPath.LastIndexOf('.'));
+            string date = string.Format("_{0}{1}{2}{3}{4}{5}_{6}",DateTime.Now.Year, DateTime.Now.Month, 
+                                 DateTime.Now.Day, DateTime.Now.Hour,DateTime.Now.Minute, DateTime.Now.Second,DateTime.Now.Millisecond);
+            filename += date + ".txt";
+
+            if (File.Exists(CSettings.UserHistoryDataPath))
+            {
+                File.Move(CSettings.UserHistoryDataPath, filename);
+            }
+                        
+            CHelper.WriteToText(newdata, CSettings.UserHistoryDataPath);
+            
+            return bRet;
+        }
+
+
 
 
 
