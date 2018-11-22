@@ -495,6 +495,104 @@ namespace Demo_BCEX_Trading
             return bRet;
         }
 
+        // 计算每个用户的权重
+        /*
+               
+              时间        数量       价格
+             06：00       +1         0.1   
+             07：00       +3         0.5   
+             08：00       +3         0.8   
+             09：00       +3         1.0   
+             10：00       -5         2.0   
+             11：00       +5         3.0   
+             12：00       +3         4.0   
+             13：00       +1         5.0   
+             14：00       -8         6.0   
+             15：00       +1000       0   
+             16：00       -200       12.0
+             17：00       +200       15.0
+             ----------------------------           
+                          +1006
+
+             200 × 15.0 = 3000
+             806 × 0    = 0             
+             -----------------
+                        +3000
+         * */                 
+
+        private MITUserTradeRecs GetWeigthDetails(DateTime dtRefundDate, MITUserTradeRecs user, double dTotalMIT, int flag = 1)
+        {
+            MITUserTradeRecs recs = new MITUserTradeRecs();
+            double dRet = 0.0;
+
+            //按交易时间降序排序，最新的交易在最前面
+            var lstRecs = user.lstTradingRecs.OrderByDescending<TradingRecords, DateTime>(x => x.dtTradingTime).ToList();
+
+            recs.sUserID = user.sUserID;
+            recs.dBalance = dTotalMIT;
+
+            //按照First In First Out的原则 
+            for (int i = 0; i < lstRecs.Count; i++)
+            {               
+                if (!IsValidTimeRange(dtRefundDate, lstRecs[i].dtTradingTime, flag))                
+                {
+                    continue;
+                }
+                var tradeRecs = new TradingRecords();
+
+                if (lstRecs[i].enuTradeType != TRADETYPE.BUY)
+                {
+                    continue;
+                }
+                var temp = dTotalMIT - lstRecs[i].dAmount;
+
+                if (temp >= 0)
+                {
+                    dRet += lstRecs[i].dAmount * lstRecs[i].dPrice;
+
+                    tradeRecs.dAmount = lstRecs[i].dAmount;
+                    tradeRecs.dPrice = lstRecs[i].dPrice;
+                    tradeRecs.RecID = lstRecs[i].RecID;
+                    tradeRecs.enuTradeType = TRADETYPE.BUY;
+                    tradeRecs.dtTradingTime = lstRecs[i].dtTradingTime;
+                    recs.lstTradingRecs.Add(tradeRecs);
+                }                
+                else
+                {
+                    dRet += dTotalMIT * lstRecs[i].dPrice;
+                    if (dTotalMIT > 0)
+                    {
+                        tradeRecs.dAmount = dTotalMIT;
+                        tradeRecs.dPrice = lstRecs[i].dPrice;
+                        tradeRecs.RecID = lstRecs[i].RecID;
+                        tradeRecs.enuTradeType = TRADETYPE.BUY;
+                        tradeRecs.dtTradingTime = lstRecs[i].dtTradingTime;
+                        recs.lstTradingRecs.Add(tradeRecs);
+                    }
+                    break;
+                }
+                dTotalMIT = temp;
+                if (dTotalMIT <= 0)
+                {
+                    break;
+                }
+            }           
+
+            return recs;
+        }              
+
+        private bool Is24Hours(DateTime dtRefundDate, DateTime dt)
+        {
+            bool bret = false;
+
+            TimeSpan ts = dtRefundDate - dt;
+
+            if (ts.TotalHours >= 24)
+            {
+                return true;
+            }
+            return bret;
+        }
 
 
 
