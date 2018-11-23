@@ -120,7 +120,7 @@ namespace Demo_BCEX_Trading
 
             return CHelper.Round(dYesterdayTotalProfit * dDayRefundRate);
         }
-		
+
         public List<MITUserWeightRecs> ComputeWeigth(DateTime dtRefundDate, int flag = 1)
         {
             var lstRet = new List<MITUserWeightRecs>();
@@ -230,29 +230,6 @@ namespace Demo_BCEX_Trading
             Console.WriteLine();
             return dRet;
         }
- //计算总权重
-        public double CalcTotalWeight(List<MITUserWeightRecs> lstUsers)
-        {
-            double dRet = 0.0;
-            foreach (var item in lstUsers)
-            {
-                dRet += item.dWeight;
-            }
-           
-            if (dRet<=0)
-            {
-                return dRet;
-            }
-            string data = string.Empty;
-            foreach (var item in lstUsers)
-            {
-                if (item.dWeight <= 0) continue;
-                data = string.Format("     用户:[{0}],权重[{1}],权重占比[{2}%]", item.sUserID, item.dWeight, CHelper.Round(item.dWeight / dRet * 100));
-                Console.WriteLine(data);
-            }
-            Console.WriteLine();
-            return dRet;
-        }
 
         /// <summary>
         /// 为每一个MIT持有者计算分红
@@ -314,7 +291,6 @@ namespace Demo_BCEX_Trading
 
             return lstRet;
         }
-
 
         /// <summary>
         /// 
@@ -401,6 +377,7 @@ namespace Demo_BCEX_Trading
 
             return recs;
         }
+
        public void TestWeight(DateTime dtRefundDate,MITUserTradeRecs user)
         {
             var dWeight = GetWeight(dtRefundDate, user);
@@ -494,6 +471,8 @@ namespace Demo_BCEX_Trading
             
             return bRet;
         }
+
+        #region
 
         // 计算每个用户的权重
         /*
@@ -593,10 +572,72 @@ namespace Demo_BCEX_Trading
             }
             return bret;
         }
+        private bool IsValidTimeRange(DateTime dtRefundDate, DateTime dt,int flag = 1)
+        {
+            DateTime dtValid1 = dtRefundDate.AddDays(-1);
+            DateTime dtValid2 = dtRefundDate.AddDays(-2);
 
+            if (dt > dtRefundDate)
+            {
+                return false;
+            }
+            if  ((dt > dtValid1 || dt <= dtValid2) && flag == 2)
+            {
+                return false;
+            }
 
+            return Is24Hours(dtRefundDate, dt);            
+        }
 
+        // 计算每个用户的权重  
+        private double GetWeightForOneUser(DateTime dtRefundDate, MITUserTradeRecs user, int flag = 1)
+        {
+            //按交易时间降序排序，最新的交易在最前面
+            var lstRecs = user.lstTradingRecs.OrderByDescending<TradingRecords, DateTime>(x => x.dtTradingTime).ToList();
+        
+            //所持有的MIT
+            double dTotalMIT = 0.0;
+            foreach (var item in lstRecs)
+            {
+                if (!IsValidTimeRange(dtRefundDate, item.dtTradingTime, flag))                
+                {
+                    continue;
+                }
+               
+                if (item.enuTradeType == TRADETYPE.BUY)
+                {
+                    dTotalMIT += item.dAmount;
+                }
+                else if (item.enuTradeType == TRADETYPE.SELL)
+                {
+                    dTotalMIT -= item.dAmount;
+                }
+            }
 
+            return dTotalMIT;
+        }
+        private double GetWeight(DateTime dtRefundDate, MITUserTradeRecs user)
+        {
+            //按交易时间降序排序，最新的交易在最前面
+            var lstRecs = user.lstTradingRecs.OrderByDescending<TradingRecords, DateTime>(x => x.dtTradingTime).ToList();
+
+            //所持有的MIT
+            double dTotalMIT = 0.0;
+            foreach (var item in lstRecs)
+            {   
+                if (item.enuTradeType == TRADETYPE.BUY)
+                {
+                    dTotalMIT += item.dAmount;
+                }
+                else if (item.enuTradeType == TRADETYPE.SELL)
+                {
+                    dTotalMIT -= item.dAmount;
+                }
+            }
+
+            return dTotalMIT < 0.000000000001?0.0:dTotalMIT;
+        }
+        #endregion
     }
 
 
