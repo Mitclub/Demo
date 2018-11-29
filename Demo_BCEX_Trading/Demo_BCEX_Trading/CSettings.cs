@@ -282,6 +282,41 @@ namespace Demo_BCEX_Trading
             }
             return user;
         }
+
     }
+
+
+    public class Record
+    {
+        public int RecID { get; set; }
+        public string Type { get; set; }
+        public double dPrice { get; set; }
+        public double dAmount { get; set; }
+        public string dtTradingTime { get; set; }
+
+        public TradingRecords Convert()
+        {
+            var rec = new TradingRecords();
+
+            rec.RecID = RecID;
+            rec.dAmount = dAmount;
+            rec.dPrice = dPrice;
+            DateTime.TryParse(dtTradingTime, out rec.dtTradingTime);
+
+            if (Type.Trim().ToUpper() == "BUY")
+            {
+                rec.enuTradeType = TRADETYPE.BUY;
+            }
+            else
+            {
+                rec.enuTradeType = TRADETYPE.SELL;
+            }
+            return rec;
+        }
+    }
+
+
+
+
 
 }
