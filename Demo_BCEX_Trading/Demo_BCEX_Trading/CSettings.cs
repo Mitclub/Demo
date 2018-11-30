@@ -314,6 +314,15 @@ namespace Demo_BCEX_Trading
             return rec;
         }
     }
+    public class User
+    {
+        public string sUserID { get; set; }
+        public int RecsSize { get; set; }
+        public double dBalance { get; set; }
+        public List<Record> Records { get; set; }
+
+    }
+
 
 
 
