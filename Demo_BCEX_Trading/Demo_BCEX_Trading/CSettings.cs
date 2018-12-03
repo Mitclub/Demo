@@ -323,6 +323,13 @@ namespace Demo_BCEX_Trading
 
     }
 
+    public class RootObject
+    {
+        public string FetchDataTime { get; set; }
+        public int Nodesize { get; set; }
+        public List<User> Users { get; set; }
+    }
+
 
 
 
