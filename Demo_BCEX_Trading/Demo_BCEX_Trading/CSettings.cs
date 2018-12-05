@@ -330,7 +330,52 @@ namespace Demo_BCEX_Trading
         public List<User> Users { get; set; }
     }
 
+    public class BCEXData
+    {
+        public Dictionary<string, MITUserWeightRecs> GetHistory()
+        {
+            char[] cs = { '\r', '\n' };
+            string[] array = history.Split(cs);
+            var dic = new Dictionary<string, MITUserWeightRecs>();
+            foreach (var item in array)
+            {
+                if (string.IsNullOrEmpty(item.Trim())) continue;
 
+                string[] datas = item.Split(',');
+                double  dn = 0.0, dp = 0.0;
+                //id,transactionid,uid,created,number,price,addtime
+                
+                if (!dic.ContainsKey(datas[2].Trim()))
+                {
+                    var recs = new MITUserWeightRecs();
+                    recs.sUserID = datas[2].Trim();
+
+                    if (double.TryParse(datas[4].Trim(),out dn) &&
+                        double.TryParse(datas[5].Trim(), out dp))
+                    {
+                        recs.dWeight += dn * dp;
+                    }
+                    dic.Add(datas[2].Trim(), recs);
+                }
+                else
+                {
+                    dic[datas[2].Trim()].dWeight += dn * dp;
+                }
+            }
+
+            double dtotal = 0.0;
+            foreach (KeyValuePair<string, MITUserWeightRecs> item in dic)
+            {
+                if (item.Value.dWeight <= 0.000000000001)
+                {
+                    Console.WriteLine("Weight is 0: " + item.Value.sUserID);
+                }
+                dtotal += item.Value.dWeight;
+            }
+            return dic;
+        }
+
+	}
 
 
 
