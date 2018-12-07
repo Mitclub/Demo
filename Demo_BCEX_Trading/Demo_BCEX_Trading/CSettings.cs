@@ -375,6 +375,85 @@ namespace Demo_BCEX_Trading
             return dic;
         }
 
+        public void GetData( List<MITUserTradeRecs> lstUsers)
+        {
+            char[] cs = { '\r','\n'};
+            string[] array = data.Split(cs);
+            Dictionary<string, List<TradingRecords>> dic = new Dictionary<string, List<TradingRecords>>();
+            foreach (var item in array)
+            {
+                if (string.IsNullOrEmpty(item.Trim())) continue;
+
+                string[] datas = item.Split(',');               
+                
+                var rec = new TradingRecords();
+                if (!double.TryParse(datas[4], out rec.dPrice))
+                {
+                    Console.WriteLine("Error!!!");
+                }
+                if (!double.TryParse(datas[3],out rec.dAmount))
+                {
+                    Console.WriteLine("Error!!!");
+                }
+                if (rec.dAmount > 0 )
+                {
+                    rec.enuTradeType = TRADETYPE.BUY;
+                }
+                else
+                {
+                    rec.dAmount = Math.Abs(rec.dAmount);
+                    rec.enuTradeType = TRADETYPE.SELL;
+                }
+                rec.dtTradingTime = GetTime(datas[2]);
+
+                if (rec.dtTradingTime > CSettings.RefundDate)
+                {
+                    continue;
+                }
+                if (!dic.ContainsKey(datas[1].Trim()))
+                {
+                    List<TradingRecords> lst = new List<TradingRecords>();
+                    lst.Add(rec);
+                    dic.Add(datas[1].Trim(),lst);
+                }
+                else
+                {
+                    dic[datas[1].Trim()].Add(rec);
+                }
+            }
+            //CMITRefundAPI2 api = new CMITRefundAPI2();
+            //var userRecs1 = new MITUserTradeRecs();
+            //userRecs1.sUserID = "569685";
+            //if (dic.ContainsKey("569685"))
+            //{
+            //    foreach (var item in dic["569685"])
+            //    {
+            //        if (item.dtTradingTime > CSettings.RefundDate)
+            //        {
+            //            continue;
+            //        }
+            //        userRecs1.lstTradingRecs.Add(item);
+            //    }
+            //    api.TestWeight(CSettings.RefundDate, userRecs1);
+            //}
+            
+            foreach (KeyValuePair<string, List<TradingRecords>> item in dic)
+            {
+                var userRecs = new MITUserTradeRecs();
+                userRecs.sUserID = item.Key;
+
+                foreach (var item2 in item.Value)
+                {
+                    if (item2.dtTradingTime > CSettings.RefundDate)
+                    {
+                        continue;
+                    }
+                    userRecs.lstTradingRecs.Add(item2);
+                }
+                lstUsers.Add(userRecs);
+            }
+        }
+
 	}
 
 
