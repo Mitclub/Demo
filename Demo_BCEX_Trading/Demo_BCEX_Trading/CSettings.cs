@@ -461,6 +461,29 @@ namespace Demo_BCEX_Trading
             TimeSpan toNow = new TimeSpan(lTime);
             return dtStart.Add(toNow);
         }
+        public List<Tuple<string, string>> TestGetWeight()
+        {
+            var lst = new List<Tuple<string, string>>();
+            int pos = 0;
+            int pos1 = 0;
+            char[] cs = { '\r', '\n' };
+            string[] datas = weight.Split(cs);
+            foreach (var item in datas)
+            {
+                if (string.IsNullOrEmpty(item.Trim())) continue;
+                if (item.IndexOf("sUserID") < 0 || item.IndexOf("dWeight") < 0) continue;
+
+                pos = item.IndexOf(">");
+                pos1 = item.IndexOf("[", pos + 1);
+                string sid = item.Substring(pos + 1, pos1 - pos - 1);
+
+                pos = item.IndexOf(">", pos1 + 1);
+                string sval = item.Substring(pos + 1);
+                lst.Add(new Tuple<string, string>(sid, sval));
+            }
+
+            return lst;
+        }
 
 	}
 
