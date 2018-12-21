@@ -1040,6 +1040,265 @@ namespace Demo_BCEX_Trading
 762,29383405,775896,1537254977,2571.78,0.00004997,1537362000";
 	}
 
+        string weight = @"[0] => Array
+        (
+            [sUserID] => 105554[dWeight] => 33.26819616
+        )
+
+    [1] => Array
+        (
+            [sUserID] => 218705[dWeight] => 0.00004950
+        )
+
+    [2] => Array
+        (
+            [sUserID] => 618557[dWeight] => 0.91208564
+        )
+
+    [3] => Array
+        (
+            [sUserID] => 674389[dWeight] => 3.87932223
+        )
+
+    [4] => Array
+        (
+            [sUserID] => 760171[dWeight] => 10.91050657
+        )
+
+    [5] => Array
+        (
+            [sUserID] => 775967[dWeight] => 0.25950000
+        )
+
+    [6] => Array
+        (
+            [sUserID] => 9025[dWeight] => 0.14502000
+        )
+
+    [7] => Array
+        (
+            [sUserID] => 12462[dWeight] => 0.01440600
+        )
+
+    [8] => Array
+        (
+            [sUserID] => 193174[dWeight] => 43.04753289
+        )
+
+    [9] => Array
+        (
+            [sUserID] => 216682[dWeight] => 1.07864450
+        )
+
+    [10] => Array
+        (
+            [sUserID] => 233214[dWeight] => 0.92779573
+        )
+
+    [11] => Array
+        (
+            [sUserID] => 241241[dWeight] => 3.04950000
+        )
+
+    [12] => Array
+        (
+            [sUserID] => 359747[dWeight] => 0.14974048
+        )
+
+    [13] => Array
+        (
+            [sUserID] => 412998[dWeight] => 3.58010600
+        )
+
+    [14] => Array
+        (
+            [sUserID] => 425364[dWeight] => 0.36556800
+        )
+
+    [15] => Array
+        (
+            [sUserID] => 457156[dWeight] => 1.99999957
+        )
+
+    [16] => Array
+        (
+            [sUserID] => 458262[dWeight] => 3.41237795
+        )
+
+    [17] => Array
+        (
+            [sUserID] => 569685[dWeight] => 2.48768542
+        )
+
+    [18] => Array
+        (
+            [sUserID] => 585125[dWeight] => 8.51453227
+        )
+
+    [19] => Array
+        (
+            [sUserID] => 608838[dWeight] => 1.39999999
+        )
+
+    [20] => Array
+        (
+            [sUserID] => 619569[dWeight] => 0.01848000
+        )
+
+    [21] => Array
+        (
+            [sUserID] => 741423[dWeight] => 0.50257676
+        )
+
+    [22] => Array
+        (
+            [sUserID] => 759050[dWeight] => 0.07239952
+        )
+
+    [23] => Array
+        (
+            [sUserID] => 759908[dWeight] => 2.00028566
+        )
+
+    [24] => Array
+        (
+            [sUserID] => 759952[dWeight] => 9.75970000
+        )
+
+    [25] => Array
+        (
+            [sUserID] => 760175[dWeight] => 0.31648567
+        )
+
+    [26] => Array
+        (
+            [sUserID] => 761127[dWeight] => 7.25089984
+        )
+
+    [27] => Array
+        (
+            [sUserID] => 762733[dWeight] => 7.09389984
+        )
+
+    [28] => Array
+        (
+            [sUserID] => 764042[dWeight] => 0.24974899
+        )
+
+    [29] => Array
+        (
+            [sUserID] => 764210[dWeight] => 0.11369165
+        )
+
+    [30] => Array
+        (
+            [sUserID] => 766424[dWeight] => 1.45350000
+        )
+
+    [31] => Array
+        (
+            [sUserID] => 766796[dWeight] => 0.36760069
+        )
+
+    [32] => Array
+        (
+            [sUserID] => 767212[dWeight] => 0.25796400
+        )
+
+    [33] => Array
+        (
+            [sUserID] => 767260[dWeight] => 0.79223502
+        )
+
+    [34] => Array
+        (
+            [sUserID] => 767435[dWeight] => 29.20256392
+        )
+
+    [35] => Array
+        (
+            [sUserID] => 768552[dWeight] => 0.26537596
+        )
+
+    [36] => Array
+        (
+            [sUserID] => 769698[dWeight] => 1.67659990
+        )
+
+    [37] => Array
+        (
+            [sUserID] => 769757[dWeight] => 1.46109984
+        )
+
+    [38] => Array
+        (
+            [sUserID] => 770164[dWeight] => 0.04449156
+        )
+
+    [39] => Array
+        (
+            [sUserID] => 771610[dWeight] => 0.73209945
+        )
+
+    [40] => Array
+        (
+            [sUserID] => 771843[dWeight] => 0.05881308
+        )
+
+    [41] => Array
+        (
+            [sUserID] => 772254[dWeight] => 0.01455900
+        )
+
+    [42] => Array
+        (
+            [sUserID] => 772784[dWeight] => 0.01485000
+        )
+
+    [43] => Array
+        (
+            [sUserID] => 772970[dWeight] => 0.04999980
+        )
+
+    [44] => Array
+        (
+            [sUserID] => 774053[dWeight] => 0.69999584
+        )
+
+    [45] => Array
+        (
+            [sUserID] => 774427[dWeight] => 0.37317545
+        )
+
+    [46] => Array
+        (
+            [sUserID] => 774635[dWeight] => 5.02859990
+        )
+
+    [47] => Array
+        (
+            [sUserID] => 774949[dWeight] => 1.17493335
+        )
+
+    [48] => Array
+        (
+            [sUserID] => 775810[dWeight] => 0.49990400
+        )
+
+    [49] => Array
+        (
+            [sUserID] => 775816[dWeight] => 0.01485000
+        )
+
+    [50] => Array
+        (
+            [sUserID] => 775863[dWeight] => 2.17989955
+        )
+
+    [51] => Array
+        (
+            [sUserID] => 775896[dWeight] => 0.12999994
+        )";
 
 
 
