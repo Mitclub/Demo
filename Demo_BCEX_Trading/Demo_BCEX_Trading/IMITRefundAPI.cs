@@ -22,4 +22,5 @@ namespace Demo_BCEX_Trading
 
         bool UpdateMITHoldersTradingRecords(DateTime dtRefundDate, List<MITUserTradeRecs> lstUsers);
     }
+
 }
