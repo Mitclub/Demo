@@ -46,6 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CBCEXTradeAPI.cs" />
+    <Compile Include="CHelper.cs" />
+    <Compile Include="CMITRefundAPI.cs" />
+    <Compile Include="CMITRefundAPI2.cs" />
+    <Compile Include="CMITRefundProcessor.cs" />
+    <Compile Include="CSettings.cs" />
+    <Compile Include="CSimulator.cs" />
+    <Compile Include="IMITRefundAPI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
