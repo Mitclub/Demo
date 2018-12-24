@@ -8,7 +8,10 @@ namespace Demo_BCEX_Trading
 {
     class Program
     {
-       
+       /// <summary>
+       /// main function
+       /// </summary>
+       /// <param name="args"></param>
         static void Main(string[] args)
         {
            
